@@ -154,9 +154,12 @@ async function logToSupabase(payload) {
     studentInput, assistantMessage, bloomData, newMode, sectionActive
   } = payload;
 
+  console.log('logToSupabase called:', sessionId, studentId, exchangeCount);
+
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseKey) return;
+  if (!supabaseUrl || !supabaseKey) { console.error('Missing Supabase env vars'); return; }
+  if (!sessionId || !studentId) { console.error('Missing IDs:', sessionId, studentId); return; }
 
   const headers = {
     'Content-Type': 'application/json',
@@ -193,6 +196,9 @@ async function logToSupabase(payload) {
       updated_at: new Date().toISOString()
     })
   });
+
+  const logText = await logRes.text();
+  console.log('logbook_entries response:', logRes.status, logText.substring(0, 200));
 
   // 2. Update session iteration count and mode
   await fetch(`${supabaseUrl}/rest/v1/sessions?id=eq.${sessionId}`, {
