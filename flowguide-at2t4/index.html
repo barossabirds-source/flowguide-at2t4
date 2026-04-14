@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlowGuide — AT2 Task 4</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f0f13; --surface: #16161e; --surface2: #1e1e2a; --border: #2a2a3a;
+      --accent: #7c6af7; --accent2: #a78bfa; --gold: #f0c060; --teal: #2dd4bf;
+      --text: #e8e8f0; --text-muted: #8888aa;
+      --coach-bg: #1a1a26; --student-bg: #1e2a3a;
+      --draft-bg: #0f1f1a; --draft-border: rgba(45,212,191,0.25);
+      --error: #f87171; --success: #4ade80;
+    }
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.6; }
+
+    /* ── SCREENS ── */
+    .screen { display: none; }
+    .screen.active { display: flex; }
+
+    /* ── ONBOARDING ── */
+    #screen-onboarding {
+      min-height: 100vh; align-items: center; justify-content: center;
+      padding: 2rem; position: relative; overflow: hidden; flex-direction: column;
+    }
+    #screen-onboarding::before {
+      content: ''; position: absolute; top: -30%; left: -20%; width: 60%; height: 60%;
+      background: radial-gradient(ellipse, rgba(124,106,247,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .onboarding-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.5rem; max-width: 480px; width: 100%; position: relative; z-index: 1;
+    }
+    .logo-mark {
+      width: 48px; height: 48px; background: linear-gradient(135deg, var(--accent), var(--gold));
+      border-radius: 13px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 1.25rem;
+    }
+    .task-badge {
+      display: inline-flex; align-items: center; background: rgba(124,106,247,0.1);
+      border: 1px solid rgba(124,106,247,0.25); color: var(--accent2);
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.25rem 0.75rem; border-radius: 100px; margin-bottom: 1.25rem;
+    }
+    .onboarding-card h1 {
+      font-family: 'DM Serif Display', serif; font-size: 2rem; line-height: 1.15; margin-bottom: 0.5rem;
+    }
+    .onboarding-card h1 em { font-style: italic; color: var(--accent2); }
+    .onboarding-desc { color: var(--text-muted); margin-bottom: 1.75rem; font-size: 0.91rem; }
+
+    /* Auth tabs */
+    .auth-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; background: var(--surface2); border-radius: 10px; padding: 3px; }
+    .auth-tab {
+      flex: 1; padding: 0.5rem; text-align: center; font-size: 0.82rem; font-weight: 600;
+      border-radius: 8px; cursor: pointer; transition: all 0.2s; color: var(--text-muted); border: none;
+      background: transparent; font-family: 'DM Sans', sans-serif;
+    }
+    .auth-tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+    .form-group { margin-bottom: 0.875rem; }
+    .form-group label {
+      display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem;
+    }
+    .form-group input {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.7rem 0.9rem; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 0.93rem; outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus { border-color: var(--accent); }
+    .form-group input::placeholder { color: var(--text-muted); }
+
+    .pin-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem; }
+
+    .auth-btn {
+      width: 100%; background: linear-gradient(135deg, var(--accent), #6c5af5);
+      border: none; border-radius: 11px; padding: 0.85rem; color: white;
+      font-family: 'DM Sans', sans-serif; font-size: 0.97rem; font-weight: 600;
+      cursor: pointer; transition: opacity 0.2s, transform 0.1s; margin-top: 0.5rem;
+    }
+    .auth-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .auth-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .auth-error {
+      background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.25);
+      color: var(--error); border-radius: 8px; padding: 0.6rem 0.875rem;
+      font-size: 0.82rem; margin-bottom: 0.875rem; display: none;
+    }
+    .auth-error.visible { display: block; }
+
+    /* Resume banner */
+    .resume-banner {
+      background: rgba(45,212,191,0.06); border: 1px solid rgba(45,212,191,0.2);
+      border-radius: 10px; padding: 0.875rem 1rem; margin-bottom: 1rem; display: none;
+    }
+    .resume-banner.visible { display: block; }
+    .resume-title { font-size: 0.8rem; font-weight: 600; color: var(--teal); margin-bottom: 0.3rem; }
+    .resume-stats { font-size: 0.78rem; color: var(--text-muted); }
+    .resume-stat { display: inline-flex; align-items: center; gap: 0.3rem; margin-right: 0.75rem; }
+
+    /* ── CHAT SCREEN ── */
+    #screen-chat { flex-direction: column; height: 100vh; }
+
+    .chat-header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0.7rem 1.25rem; display: flex; align-items: center;
+      justify-content: space-between; flex-shrink: 0;
+    }
+    .header-left { display: flex; align-items: center; gap: 0.75rem; }
+    .header-logo {
+      width: 34px; height: 34px; background: linear-gradient(135deg, var(--accent), var(--gold));
+      border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
+    }
+    .header-title { font-family: 'DM Serif Display', serif; font-size: 1rem; }
+    .header-sub { font-size: 0.68rem; color: var(--text-muted); }
+    .header-right { display: flex; align-items: center; gap: 0.75rem; }
+
+    .mode-badge {
+      display: flex; align-items: center; gap: 0.35rem; padding: 0.22rem 0.65rem;
+      border-radius: 100px; font-size: 0.7rem; font-weight: 600; transition: all 0.4s;
+    }
+    .mode-badge.thinking { background: rgba(124,106,247,0.12); border: 1px solid rgba(124,106,247,0.3); color: var(--accent2); }
+    .mode-badge.drafting { background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.3); color: var(--teal); }
+    .mode-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .mode-badge.thinking .mode-dot { background: var(--accent2); }
+    .mode-badge.drafting .mode-dot { background: var(--teal); }
+
+    .bloom-bar { display: flex; align-items: center; gap: 0.4rem; }
+    .bloom-label { font-size: 0.66rem; color: var(--text-muted); }
+    .bloom-dots { display: flex; gap: 3px; }
+    .bloom-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
+    .bloom-dot.active { background: var(--accent2); }
+    .bloom-dot.peak { background: var(--gold); }
+
+    .pillar-bar {
+      display: flex; gap: 0.4rem; padding: 0.5rem 1.25rem;
+      background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .pillar-chip {
+      flex: 1; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 7px; padding: 0.3rem 0.4rem; font-size: 0.68rem; text-align: center;
+      color: var(--text-muted); transition: all 0.3s;
+    }
+    .pillar-chip.active { border-color: var(--accent); color: var(--accent2); background: rgba(124,106,247,0.08); }
+    .pillar-chip.visited { border-color: rgba(240,192,96,0.3); color: var(--gold); background: rgba(240,192,96,0.05); }
+
+    /* Messages */
+    .messages-wrap {
+      flex: 1; overflow-y: auto; padding: 1.1rem;
+      display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .messages-wrap::-webkit-scrollbar { width: 3px; }
+    .messages-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .message { max-width: 78%; animation: fadeUp 0.25s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .message.coach { align-self: flex-start; }
+    .message.student { align-self: flex-end; }
+
+    .msg-meta { font-size: 0.67rem; color: var(--text-muted); margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+    .message.student .msg-meta { justify-content: flex-end; }
+
+    .bloom-tag { font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 100px; font-weight: 600; }
+    .bloom-tag.low { background: rgba(251,146,60,0.12); color: #fb923c; }
+    .bloom-tag.mid { background: rgba(124,106,247,0.12); color: var(--accent2); }
+    .bloom-tag.high { background: rgba(240,192,96,0.12); color: var(--gold); }
+    .pillar-tag { font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 100px; background: rgba(255,255,255,0.04); color: var(--text-muted); }
+
+    /* Session restore label */
+    .restored-label { font-size: 0.65rem; color: var(--teal); font-style: italic; }
+
+    .msg-bubble { padding: 0.8rem 0.95rem; border-radius: 15px; font-size: 0.9rem; line-height: 1.65; }
+    .message.coach .msg-bubble { background: var(--coach-bg); border: 1px solid var(--border); border-top-left-radius: 4px; }
+    .message.student .msg-bubble { background: var(--student-bg); border: 1px solid rgba(124,106,247,0.2); border-top-right-radius: 4px; }
+    .message.restored .msg-bubble { opacity: 0.75; }
+
+    /* Draft outputs */
+    .draft-output {
+      background: var(--draft-bg); border: 1px solid var(--draft-border);
+      border-radius: 11px; padding: 0.875rem 1rem; margin-top: 0.65rem; position: relative;
+    }
+    .draft-output-label {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 0.45rem; display: flex; align-items: center; justify-content: space-between;
+    }
+    .copy-btn {
+      background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.25); color: var(--teal);
+      border-radius: 5px; padding: 0.18rem 0.55rem; font-size: 0.67rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    }
+    .copy-btn:hover { background: rgba(45,212,191,0.2); }
+    .copy-btn.copied { background: rgba(74,222,128,0.15); border-color: rgba(74,222,128,0.3); color: var(--success); }
+    .draft-content { font-size: 0.87rem; line-height: 1.7; color: #c8d8d0; white-space: pre-wrap; }
+
+    .mode-switch-msg {
+      align-self: center; background: rgba(45,212,191,0.06); border: 1px solid rgba(45,212,191,0.2);
+      border-radius: 9px; padding: 0.5rem 1.1rem; font-size: 0.76rem; color: var(--teal);
+      text-align: center; animation: fadeUp 0.3s ease;
+    }
+    .session-divider {
+      align-self: center; display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.7rem; color: var(--text-muted); margin: 0.5rem 0;
+    }
+    .session-divider::before, .session-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* Typing */
+    .typing-indicator { display: none; align-self: flex-start; background: var(--coach-bg); border: 1px solid var(--border); border-radius: 15px; border-top-left-radius: 4px; padding: 0.8rem 0.95rem; }
+    .typing-dots { display: flex; gap: 4px; align-items: center; }
+    .typing-dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--text-muted); animation: tdot 1.2s infinite; }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes tdot { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
+
+    /* Input */
+    .input-area { background: var(--surface); border-top: 1px solid var(--border); padding: 0.8rem 1.25rem; flex-shrink: 0; }
+    .input-wrap {
+      display: flex; gap: 0.55rem; align-items: flex-end; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 13px; padding: 0.6rem 0.85rem; transition: border-color 0.2s;
+    }
+    .input-wrap:focus-within { border-color: var(--accent); }
+    .input-wrap.draft-mode:focus-within { border-color: var(--teal); }
+    #msg-input {
+      flex: 1; background: transparent; border: none; outline: none; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 0.91rem; line-height: 1.5;
+      resize: none; max-height: 120px; min-height: 22px;
+    }
+    #msg-input::placeholder { color: var(--text-muted); }
+    .send-btn {
+      width: 32px; height: 32px; border: none; border-radius: 8px; color: white;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: opacity 0.2s, transform 0.1s;
+    }
+    .send-btn.t { background: var(--accent); }
+    .send-btn.d { background: #0d9488; }
+    .send-btn:hover { opacity: 0.85; transform: scale(1.05); }
+    .send-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+    .input-hint { font-size: 0.67rem; color: var(--text-muted); text-align: center; margin-top: 0.35rem; }
+
+    @media (max-width: 600px) {
+      .message { max-width: 92%; }
+      .header-right { display: none; }
+      .onboarding-card { padding: 1.75rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── ONBOARDING SCREEN ── -->
+<div id="screen-onboarding" class="screen active">
+  <div class="onboarding-card">
+    <div class="logo-mark">🧭</div>
+    <div class="task-badge">Stage 2 Business Innovation · AT2 Task 4</div>
+    <h1>Meet <em>FlowGuide</em></h1>
+    <p class="onboarding-desc">Your thinking coach for the Business Model Evaluation. Your session is saved — pick up exactly where you left off, any time, any device.</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('new')" id="tab-new">First time</button>
+      <button class="auth-tab" onclick="switchTab('return')" id="tab-return">Returning</button>
+    </div>
+
+    <div class="auth-error" id="auth-error"></div>
+
+    <div class="resume-banner" id="resume-banner">
+      <div class="resume-title">✓ Session found — ready to resume</div>
+      <div class="resume-stats" id="resume-stats"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Your Name</label>
+      <input type="text" id="input-name" placeholder="First name or nickname" autocomplete="off" oninput="clearError()">
+    </div>
+
+    <div class="form-group">
+      <label id="pin-label">Choose a 4-digit PIN</label>
+      <input type="password" id="input-pin" placeholder="e.g. 4829" maxlength="4" pattern="[0-9]*" inputmode="numeric" autocomplete="off" oninput="clearError(); handlePinInput()">
+      <div class="pin-hint" id="pin-hint">You'll use this PIN to resume your session on any device. Write it down.</div>
+    </div>
+
+    <button class="auth-btn" id="auth-btn" onclick="handleAuth()">Begin my session →</button>
+  </div>
+</div>
+
+<!-- ── CHAT SCREEN ── -->
+<div id="screen-chat" class="screen">
+  <div class="chat-header">
+    <div class="header-left">
+      <div class="header-logo">🧭</div>
+      <div>
+        <div class="header-title">FlowGuide</div>
+        <div class="header-sub" id="student-label">AT2 Task 4</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="mode-badge thinking" id="mode-badge">
+        <div class="mode-dot"></div>
+        <span id="mode-label">Thinking</span>
+      </div>
+      <div class="bloom-bar">
+        <span class="bloom-label">Depth</span>
+        <div class="bloom-dots" id="bloom-dots">
+          <div class="bloom-dot" data-r="1"></div>
+          <div class="bloom-dot" data-r="2"></div>
+          <div class="bloom-dot" data-r="3"></div>
+          <div class="bloom-dot" data-r="4"></div>
+          <div class="bloom-dot" data-r="5"></div>
+          <div class="bloom-dot" data-r="6"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pillar-bar">
+    <div class="pillar-chip" id="chip-TOOLS">🛠️ Tools</div>
+    <div class="pillar-chip" id="chip-RISKS">⚡ Risks</div>
+    <div class="pillar-chip" id="chip-CONTRIBUTION">💡 Contribution</div>
+  </div>
+
+  <div class="messages-wrap" id="messages">
+    <div class="typing-indicator" id="typing">
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-wrap" id="input-wrap">
+      <textarea id="msg-input" placeholder="Type your response…" rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn t" id="send-btn" onclick="sendMessage()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+    <div class="input-hint">Enter to send · Shift+Enter for new line · <span id="exchange-hint">0 exchanges</span></div>
+  </div>
+</div>
+
+<script>
+  // ── STATE ──────────────────────────────────────────────────
+  let sessionId = null, studentName = '', studentDisplayName = '';
+  let messages = [], exchangeCount = 0, highestBloom = 0;
+  let currentMode = 'thinking', activePillar = null;
+  let visitedPillars = new Set(), sectionActive = null;
+  let isReturning = false, resumeData = null;
+  let currentTab = 'new';
+
+  const BLOOM_LABELS = ['','Remember','Understand','Apply','Analyse','Evaluate','Create'];
+
+  // ── AUTH UI ────────────────────────────────────────────────
+  function switchTab(tab) {
+    currentTab = tab;
+    document.getElementById('tab-new').classList.toggle('active', tab === 'new');
+    document.getElementById('tab-return').classList.toggle('active', tab === 'return');
+    document.getElementById('pin-label').textContent = tab === 'new' ? 'Choose a 4-digit PIN' : 'Your PIN';
+    document.getElementById('pin-hint').textContent = tab === 'new'
+      ? 'You\'ll use this PIN to resume your session on any device. Write it down.'
+      : 'Enter the PIN you created when you first started.';
+    document.getElementById('auth-btn').textContent = tab === 'new' ? 'Begin my session →' : 'Resume my session →';
+    document.getElementById('resume-banner').classList.remove('visible');
+    clearError();
+  }
+
+  function clearError() {
+    document.getElementById('auth-error').classList.remove('visible');
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('auth-error');
+    el.textContent = msg;
+    el.classList.add('visible');
+  }
+
+  function handlePinInput() {
+    const pin = document.getElementById('input-pin').value;
+    // Only allow digits
+    document.getElementById('input-pin').value = pin.replace(/\D/g, '');
+  }
+
+  async function handleAuth() {
+    const name = document.getElementById('input-name').value.trim();
+    const pin = document.getElementById('input-pin').value.trim();
+
+    if (!name) { showError('Please enter your name.'); return; }
+    if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+      showError('Please enter a 4-digit PIN (numbers only).'); return;
+    }
+
+    const btn = document.getElementById('auth-btn');
+    btn.disabled = true;
+    btn.textContent = 'Checking…';
+
+    try {
+      const res = await fetch('/.netlify/functions/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: currentTab === 'new' ? 'register' : 'check',
+          name, pin
+        })
+      });
+
+      const data = await res.json();
+
+      if (currentTab === 'return') {
+        if (!data.exists) {
+          showError('No session found for that name. Try "First time" to create a new session.');
+          btn.disabled = false; btn.textContent = 'Resume my session →'; return;
+        }
+        if (!data.valid) {
+          showError('Incorrect PIN. Please try again.');
+          btn.disabled = false; btn.textContent = 'Resume my session →'; return;
+        }
+        // Valid returning student
+        resumeData = data;
+        isReturning = true;
+        launchChat(name, data);
+      } else {
+        // New student
+        if (!data.success) {
+          // Name exists — suggest returning tab
+          showError(data.error || 'Something went wrong. If you have an existing session, use the "Returning" tab.');
+          btn.disabled = false; btn.textContent = 'Begin my session →'; return;
+        }
+        isReturning = false;
+        launchChat(name, data);
+      }
+    } catch (err) {
+      showError('Connection error — please check your internet and try again.');
+      btn.disabled = false;
+      btn.textContent = currentTab === 'new' ? 'Begin my session →' : 'Resume my session →';
+    }
+  }
+
+  // ── LAUNCH CHAT ────────────────────────────────────────────
+  function launchChat(name, data) {
+    studentDisplayName = name.trim();
+    studentName = name.toLowerCase().trim();
+    sessionId = data.sessionId;
+    exchangeCount = data.exchangeCount || 0;
+    messages = data.messages || [];
+    currentMode = data.lastMode || 'thinking';
+    highestBloom = data.lastBloom || 0;
+
+    document.getElementById('student-label').textContent = studentDisplayName + ' · AT2 Task 4';
+    document.getElementById('exchange-hint').textContent = exchangeCount + ' exchanges';
+
+    // Switch screens
+    document.getElementById('screen-onboarding').classList.remove('active');
+    document.getElementById('screen-chat').classList.add('active');
+
+    // Restore mode UI
+    if (currentMode === 'drafting') applyDraftModeUI(false);
+
+    // Restore Bloom display
+    if (highestBloom > 0) updateBloom(highestBloom, data.lastPillar);
+
+    // Restore conversation history
+    if (isReturning && data.displayHistory && data.displayHistory.length > 0) {
+      const divider = document.createElement('div');
+      divider.className = 'session-divider';
+      divider.textContent = 'Previous session restored';
+      document.getElementById('messages').insertBefore(divider, document.getElementById('typing'));
+
+      data.displayHistory.forEach(item => {
+        if (item.role === 'coach') appendCoach(item.text, item.bloom, true);
+        else appendStudent(item.text, true);
+      });
+
+      // Continuation prompt from FlowGuide
+      const continuationPrompt = buildContinuationPrompt(data);
+      appendCoach(continuationPrompt, null);
+      messages.push({ role: 'assistant', content: continuationPrompt });
+
+    } else {
+      // New student welcome
+      const welcome = `Welcome, ${studentDisplayName}! I'm FlowGuide — your thinking coach for the Business Model Evaluation.\n\nWe'll work in two phases. First I'll ask Socratic questions to deepen your thinking. When you're ready, we shift into drafting mode to build your essay plan section by section.\n\nTo get started: **what is your business, and what core problem or need does it address?**`;
+      appendCoach(welcome, null);
+      messages.push({ role: 'assistant', content: welcome });
+    }
+
+    document.getElementById('msg-input').focus();
+  }
+
+  function buildContinuationPrompt(data) {
+    const bloomLabel = BLOOM_LABELS[data.lastBloom] || 'developing';
+    const modeStr = data.lastMode === 'drafting' ? 'drafting mode' : 'thinking mode';
+    const pillarStr = data.lastPillar && data.lastPillar !== 'DRAFTING'
+      ? `You were last working on **${data.lastPillar.toLowerCase().replace('_',' ')}**.`
+      : '';
+    return `Welcome back, ${studentDisplayName}! I've restored your full session — ${data.exchangeCount} exchanges so far.\n\nYou were in **${modeStr}**, thinking at a **${bloomLabel}** level. ${pillarStr}\n\nReady to continue from where you left off?`;
+  }
+
+  // ── MESSAGES ───────────────────────────────────────────────
+  function appendCoach(text, bloom, restored = false) {
+    const container = document.getElementById('messages');
+    const typing = document.getElementById('typing');
+    const div = document.createElement('div');
+    div.className = 'message coach' + (restored ? ' restored' : '');
+
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.innerHTML = '🧭 FlowGuide';
+
+    if (bloom && bloom.bloom_rank) {
+      const r = bloom.bloom_rank;
+      const cls = r <= 2 ? 'low' : r <= 4 ? 'mid' : 'high';
+      meta.innerHTML += ` <span class="bloom-tag ${cls}">Bloom ${r} · ${BLOOM_LABELS[r]}</span>`;
+      if (bloom.active_pillar) meta.innerHTML += ` <span class="pillar-tag">${bloom.active_pillar}</span>`;
+      if (!restored) updateBloom(r, bloom.active_pillar);
+    }
+    if (restored) meta.innerHTML += ` <span class="restored-label">restored</span>`;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+    bubble.innerHTML = parseOutputBlocks(text);
+
+    div.appendChild(meta);
+    div.appendChild(bubble);
+    container.insertBefore(div, typing);
+    container.scrollTop = container.scrollHeight;
+
+    // Wire up copy buttons
+    div.querySelectorAll('.draft-output').forEach(block => {
+      const btn = block.querySelector('.copy-btn');
+      const content = block.querySelector('.draft-content');
+      if (btn && content) {
+        btn.addEventListener('click', () => {
+          navigator.clipboard.writeText(content.textContent).then(() => {
+            btn.textContent = '✓ Copied';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+          });
+        });
+      }
+    });
+  }
+
+  function appendStudent(text, restored = false) {
+    const container = document.getElementById('messages');
+    const typing = document.getElementById('typing');
+    const div = document.createElement('div');
+    div.className = 'message student' + (restored ? ' restored' : '');
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.textContent = studentDisplayName;
+    if (restored) meta.innerHTML += ` <span class="restored-label">restored</span>`;
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+    bubble.textContent = text;
+    div.appendChild(meta);
+    div.appendChild(bubble);
+    container.insertBefore(div, typing);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function parseOutputBlocks(text) {
+    let html = text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+
+    // Wrap OUTPUT A
+    html = html.replace(
+      /OUTPUT A\s*[—-]\s*ARGUMENT SUMMARY<br>([\s\S]*?)(?=OUTPUT B|$)/gi,
+      (_, content) => `<div class="draft-output">
+        <div class="draft-output-label">OUTPUT A — ARGUMENT SUMMARY <button class="copy-btn">Copy</button></div>
+        <div class="draft-content">${content}</div></div>`
+    );
+
+    // Wrap OUTPUT B
+    html = html.replace(
+      /OUTPUT B\s*[—-]\s*PARAGRAPH SCAFFOLD<br>([\s\S]*?)(?=<div class="draft|Ready to move|$)/gi,
+      (_, content) => `<div class="draft-output">
+        <div class="draft-output-label">OUTPUT B — PARAGRAPH SCAFFOLD <button class="copy-btn">Copy</button></div>
+        <div class="draft-content">${content}</div></div>`
+    );
+
+    return html;
+  }
+
+  function updateBloom(rank, pillar) {
+    document.querySelectorAll('.bloom-dot').forEach(d => {
+      const r = parseInt(d.dataset.r);
+      d.className = 'bloom-dot';
+      if (r <= rank) d.classList.add('active');
+      if (r <= highestBloom) d.classList.add('peak');
+    });
+    if (rank > highestBloom) highestBloom = rank;
+
+    if (pillar && !['DRAFTING', null, undefined].includes(pillar)) {
+      activePillar = pillar;
+      visitedPillars.add(pillar);
+      ['TOOLS','RISKS','CONTRIBUTION'].forEach(p => {
+        const chip = document.getElementById('chip-' + p);
+        if (!chip) return;
+        chip.className = 'pillar-chip';
+        if (p === pillar) chip.classList.add('active');
+        else if (visitedPillars.has(p)) chip.classList.add('visited');
+      });
+    }
+  }
+
+  function applyDraftModeUI(announce = true) {
+    currentMode = 'drafting';
+    const badge = document.getElementById('mode-badge');
+    badge.className = 'mode-badge drafting';
+    document.getElementById('mode-label').textContent = 'Drafting';
+    document.getElementById('input-wrap').classList.add('draft-mode');
+    const btn = document.getElementById('send-btn');
+    btn.className = 'send-btn d';
+    document.getElementById('msg-input').placeholder = 'Share your thinking for this section…';
+
+    if (announce) {
+      const container = document.getElementById('messages');
+      const typing = document.getElementById('typing');
+      const ann = document.createElement('div');
+      ann.className = 'mode-switch-msg';
+      ann.innerHTML = '✏️ <strong>Drafting mode</strong> — building your essay plan section by section';
+      container.insertBefore(ann, typing);
+      container.scrollTop = container.scrollHeight;
+    }
+  }
+
+  // ── SEND ───────────────────────────────────────────────────
+  async function sendMessage() {
+    const input = document.getElementById('msg-input');
+    const text = input.value.trim();
+    if (!text || document.getElementById('send-btn').disabled) return;
+
+    appendStudent(text);
+    input.value = '';
+    input.style.height = 'auto';
+    exchangeCount++;
+    document.getElementById('exchange-hint').textContent = exchangeCount + ' exchanges';
+    messages.push({ role: 'user', content: text });
+
+    document.getElementById('send-btn').disabled = true;
+    document.getElementById('typing').style.display = 'block';
+    document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+
+    try {
+      const res = await fetch('/.netlify/functions/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages, sessionId, studentName,
+          exchangeCount, currentMode, sectionActive
+        })
+      });
+
+      const data = await res.json();
+      document.getElementById('typing').style.display = 'none';
+
+      if (data.message) {
+        if (data.mode === 'drafting' && currentMode === 'thinking') applyDraftModeUI(true);
+        currentMode = data.mode || currentMode;
+        appendCoach(data.message, data.bloom);
+        messages.push({ role: 'assistant', content: data.message });
+      } else {
+        appendCoach('Something went wrong — please try again.', null);
+      }
+    } catch (err) {
+      document.getElementById('typing').style.display = 'none';
+      appendCoach('Connection error — please check your internet and try again.', null);
+    }
+
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('msg-input').focus();
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+</script>
+</body>
+</html>
