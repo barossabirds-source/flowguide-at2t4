@@ -1,3 +1,7 @@
+const TRINITY_TENANT_ID = 'b8e8dce2-4bc2-46e2-af08-3a2fd0051b4d';
+const AGENT_ID = 'AT2T4';
+const SUBJECT = 'Stage 2 Business Innovation';
+
 const SYSTEM_PROMPT = `You are FlowGuide, a Socratic learning coach for Year 12 SACE Stage 2 Business Innovation students preparing their individual Business Model Evaluation for AT2 Task 4.
 
 THE TASK
@@ -72,44 +76,44 @@ ESSAY SECTIONS:
 
 SECTION 1: INTRODUCTION (~150 words)
 Ask: "Describe your business in 2-3 sentences." and "What three things will your evaluation cover?"
-Output A format: Business / Core problem solved / Evaluation scope (three things)
+Output A: Business / Core problem solved / Evaluation scope (three things)
 Output B: [Business name] is a [type of business] that addresses [customer problem] by [value proposition]. This evaluation examines [tool 1], [tool 2], and [individual contribution aspect].
 
 SECTION 2: TOOLS & PROCESS (~500 words) — CA1
 Ask: "Which tool had the biggest impact on your model development? What did it reveal?" and "How effective was it? What would you have missed without it?" and "What would you do differently?"
-Output A format: Most impactful tool / What it revealed / How it changed the model / Effectiveness evaluation / Second tool / What you'd do differently / AE3 connection if raised
-Output B: [Opening claim about tool effectiveness] / [Specific evidence/data it produced] / [What it revealed about the model] / [Specific change made to the model] / [Evaluation — was it effective? Compare to alternatives] / [Second tool — name and brief evaluation] / [Reflection — what you'd do differently and why]
+Output A: Most impactful tool / What it revealed / How it changed the model / Effectiveness evaluation / Second tool / What you'd do differently / AE3 connection if raised
+Output B: [Opening claim about tool effectiveness] / [Specific evidence/data it produced] / [What it revealed about the model] / [Specific change made to the model] / [Evaluation — was it effective?] / [Second tool — name and brief evaluation] / [Reflection — what you'd do differently and why]
 
 SECTION 3: RISKS, OPPORTUNITIES & DIGITAL (~500 words) — AE1, AE2
 Ask: "What is the biggest risk to your model? What evidence do you have?" and "What specific digital technology is a threat or opportunity?" and "What are your recommendations to improve the model?"
-Output A format: Primary risk + evidence / Digital threat or opportunity + impact / Other risk + mitigation / Recommendation 1 + justification / Recommendation 2 + justification / AE3 dimension
-Output B: [Opening evaluative claim about primary risk] / [Evidence supporting the risk] / [Digital technology identified — threat or opportunity?] / [How this affects model viability] / [Recommendation 1 with justification] / [Recommendation 2 with justification] / [AE3 — social, economic, environmental or ethical dimension]
+Output A: Primary risk + evidence / Digital threat or opportunity + impact / Other risk + mitigation / Recommendation 1 + justification / Recommendation 2 + justification / AE3 dimension
+Output B: [Opening evaluative claim about primary risk] / [Evidence supporting the risk] / [Digital technology — threat or opportunity?] / [How this affects model viability] / [Recommendation 1 with justification] / [Recommendation 2 with justification] / [AE3 dimension]
 
 SECTION 4: INDIVIDUAL CONTRIBUTION & BUSINESS INTELLIGENCE (~600 words) — CA2, CA3
 Ask: "What was your most significant individual contribution? Be specific." and "How did you create business intelligence — what data, from where, how used?" and "How did your communication and collaboration contribute?"
-Output A format: Primary contribution / BI created + source + how used / Second BI contribution + model impact / Pivot made from BI / Collaboration example / CA3 evidence / AE3 connection if raised
-Output B: [Opening claim about most significant contribution] / [Specific evidence of what you did] / [How you gathered business intelligence — methods and sources] / [How BI directly changed the model] / [Specific pivot made based on evidence] / [Collaboration contribution] / [Reflective evaluation of your contribution quality]
+Output A: Primary contribution / BI created + source + how used / Second BI + model impact / Pivot made from BI / Collaboration example / CA3 evidence / AE3 if raised
+Output B: [Opening claim about most significant contribution] / [Specific evidence of what you did] / [How you gathered business intelligence] / [How BI directly changed the model] / [Specific pivot made based on evidence] / [Collaboration contribution] / [Reflective evaluation of your contribution quality]
 
 SECTION 5: CONCLUSION (~250 words) — AE1, AE3
 Ask: "Overall, how would you evaluate your model's viability — strengths and limitations honestly?" and "What is the most important thing you learned?" and "What social, economic, environmental or ethical dimension is most significant?"
-Output A format: Overall viability evaluation / Greatest strength + evidence / Most significant limitation / Most important learning / AE3 dimension / Final recommendation
-Output B: [Overall evaluative claim about model viability] / [Greatest strength with justification] / [Most significant limitation honestly assessed] / [AE3 — social, economic, environmental or ethical impact] / [Most important learning from the process] / [Final recommendation to strengthen the model]
+Output A: Overall viability evaluation / Greatest strength + evidence / Most significant limitation / Most important learning / AE3 dimension / Final recommendation
+Output B: [Overall evaluative claim about model viability] / [Greatest strength with justification] / [Most significant limitation honestly assessed] / [AE3 — social, economic, environmental or ethical impact] / [Most important learning] / [Final recommendation]
 
 DRAFTING MODE RULES:
-1. Work through ONE section at a time — do not skip ahead
-2. Ask questions for the section BEFORE producing outputs
+1. Work through ONE section at a time
+2. Ask questions BEFORE producing outputs
 3. Clearly label OUTPUT A — ARGUMENT SUMMARY and OUTPUT B — PARAGRAPH SCAFFOLD
 4. Use [BRACKETS] in Output B — never write actual student content
-5. After both outputs, ask: "Ready to move to the next section?"
-6. Student's own words must drive everything — never invent content
-7. If a student's response is thin, ask one more question before producing outputs
+5. After both outputs: "Ready to move to the next section?"
+6. Student's own words must drive everything
+7. If response is thin, ask one more question before producing outputs
 
 FINAL SUMMARY (after all five sections complete):
-Produce a clearly labelled box the student can copy containing:
+Produce a clearly labelled summary box containing:
 - Essay section word targets
 - Readiness signal: Keep thinking 🧠 / Almost ready ✍️ / Ready to write 🚀
-- Top strength demonstrated in this session
-- One growth edge to address before submitting
+- Top strength demonstrated
+- One growth edge before submitting
 - Which criteria they covered most strongly`;
 
 const BLOOM_EVALUATOR_PROMPT = `You are a SACE Stage 2 Business Innovation expert and Bloom's Taxonomy specialist.
@@ -144,34 +148,78 @@ Return exactly this JSON:
   "next_nudge_direction": "What to push toward next"
 }`;
 
+async function logToSupabase(payload) {
+  const {
+    sessionId, studentId, exchangeCount,
+    studentInput, assistantMessage, bloomData, newMode, sectionActive
+  } = payload;
+
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseKey) return;
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'apikey': supabaseKey,
+    'Authorization': `Bearer ${supabaseKey}`,
+    'Prefer': 'return=minimal'
+  };
+
+  // 1. Log exchange to logbook_entries
+  await fetch(`${supabaseUrl}/rest/v1/logbook_entries`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      tenant_id: TRINITY_TENANT_ID,
+      session_id: sessionId,
+      student_id: studentId,
+      task_id: AGENT_ID,
+      iteration_number: exchangeCount,
+      full_prompt: studentInput,
+      ai_response_summary: assistantMessage,
+      prompt_quality_score: bloomData.bloom_rank,
+      reflection: {
+        active_pillar: bloomData.active_pillar,
+        ae3_present: bloomData.ae3_present,
+        mode: newMode,
+        section_active: sectionActive || null,
+        reasoning: bloomData.reasoning,
+        sace_grade_signal: bloomData.sace_grade_signal,
+        next_nudge_direction: bloomData.next_nudge_direction
+      },
+      prompt_word_count: studentInput.split(/\s+/).length,
+      step_number: exchangeCount,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })
+  });
+
+  // 2. Update session iteration count and mode
+  await fetch(`${supabaseUrl}/rest/v1/sessions?id=eq.${sessionId}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({
+      iteration_count: exchangeCount,
+      metadata: { mode: newMode, agent: 'FlowGuide', last_pillar: bloomData.active_pillar },
+      step_updated_at: new Date().toISOString()
+    })
+  });
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
-      },
+      headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' },
       body: ''
     };
   }
-
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
   try {
-    const {
-      messages,
-      sessionId,
-      studentName,
-      exchangeCount,
-      currentMode,
-      sectionActive
-    } = JSON.parse(event.body);
+    const { messages, sessionId, studentId, studentName, exchangeCount, currentMode, sectionActive } = JSON.parse(event.body);
 
-    // 1. Get coaching response from Claude Sonnet
+    // 1. Get coaching response
     const chatResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -183,7 +231,7 @@ exports.handler = async (event) => {
         model: 'claude-sonnet-4-5',
         max_tokens: 2048,
         system: SYSTEM_PROMPT,
-        messages: messages
+        messages
       })
     });
 
@@ -192,105 +240,43 @@ exports.handler = async (event) => {
 
     // Detect mode switch
     let newMode = currentMode || 'thinking';
-    const lowerMsg = assistantMessage.toLowerCase();
-    if (lowerMsg.includes('output a') || lowerMsg.includes('argument summary') || lowerMsg.includes('paragraph scaffold')) {
+    const lower = assistantMessage.toLowerCase();
+    if (lower.includes('output a') || lower.includes('argument summary') || lower.includes('paragraph scaffold')) {
       newMode = 'drafting';
     }
 
-    // 2. Bloom evaluation via Claude Haiku (fast + cheap)
+    // 2. Bloom evaluation via Haiku
     const lastStudentMessage = messages[messages.length - 1].content;
-    let bloomData = null;
+    let bloomData = { bloom_rank: 1, active_pillar: 'TOOLS', ae3_present: false, mode_detected: newMode, reasoning: 'Unavailable', sace_grade_signal: 'N/A', next_nudge_direction: '' };
 
     try {
-      const bloomResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      const bloomRes = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01'
-        },
+        headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 512,
-          messages: [{
-            role: 'user',
-            content: BLOOM_EVALUATOR_PROMPT
-              .replace('{STUDENT_MESSAGE}', lastStudentMessage)
-              .replace('{MODE}', currentMode || 'thinking')
-          }]
+          messages: [{ role: 'user', content: BLOOM_EVALUATOR_PROMPT.replace('{STUDENT_MESSAGE}', lastStudentMessage).replace('{MODE}', currentMode || 'thinking') }]
         })
       });
+      const bloomResult = await bloomRes.json();
+      const clean = bloomResult.content[0].text.trim().replace(/```json|```/g, '').trim();
+      bloomData = JSON.parse(clean);
+    } catch (e) { console.error('Bloom error:', e); }
 
-      const bloomResult = await bloomResponse.json();
-      const rawText = bloomResult.content[0].text.trim();
-      // Strip markdown fences if present
-      const cleanText = rawText.replace(/```json|```/g, '').trim();
-      bloomData = JSON.parse(cleanText);
-    } catch (bloomError) {
-      console.error('Bloom evaluation error:', bloomError);
-      bloomData = {
-        bloom_rank: 1,
-        active_pillar: 'TOOLS',
-        ae3_present: false,
-        mode_detected: currentMode || 'thinking',
-        reasoning: 'Evaluation unavailable',
-        sace_grade_signal: 'N/A',
-        next_nudge_direction: 'Continue coaching'
-      };
-    }
-
-    // 3. Log to Supabase (silently fails without breaking student experience)
-    if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
-      try {
-        await fetch(`${process.env.SUPABASE_URL}/rest/v1/exchanges`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': process.env.SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`
-          },
-          body: JSON.stringify({
-            session_id: sessionId,
-            student_name: studentName || 'Anonymous',
-            exchange_number: exchangeCount,
-            student_input: lastStudentMessage,
-            coach_response: assistantMessage,
-            bloom_rank: bloomData.bloom_rank,
-            active_pillar: bloomData.active_pillar,
-            ae3_present: bloomData.ae3_present,
-            mode: newMode,
-            section_active: sectionActive || null,
-            reasoning: bloomData.reasoning,
-            sace_grade_signal: bloomData.sace_grade_signal,
-            next_nudge_direction: bloomData.next_nudge_direction,
-            agent_id: 'AT2T4-BI-2026',
-            created_at: new Date().toISOString()
-          })
-        });
-      } catch (supabaseError) {
-        console.error('Supabase logging error:', supabaseError);
-      }
-    }
+    // 3. Log to Supabase (silent fail)
+    try {
+      await logToSupabase({ sessionId, studentId, exchangeCount, studentInput: lastStudentMessage, assistantMessage, bloomData, newMode, sectionActive });
+    } catch (e) { console.error('Supabase error:', e); }
 
     return {
       statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        message: assistantMessage,
-        bloom: bloomData,
-        mode: newMode
-      })
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ message: assistantMessage, bloom: bloomData, mode: newMode })
     };
 
   } catch (error) {
     console.error('Handler error:', error);
-    return {
-      statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: 'Internal server error', details: error.message })
-    };
+    return { statusCode: 500, headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'Internal server error' }) };
   }
 };
