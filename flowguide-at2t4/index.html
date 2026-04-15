@@ -15,7 +15,7 @@
       --draft-bg: #0f1f1a; --draft-border: rgba(45,212,191,0.25);
       --error: #f87171; --success: #4ade80;
     }
-    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.6; }
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 17px; line-height: 1.6; }
 
     /* ── SCREENS ── */
     .screen { display: none; }
@@ -47,10 +47,10 @@
       padding: 0.25rem 0.75rem; border-radius: 100px; margin-bottom: 1.25rem;
     }
     .onboarding-card h1 {
-      font-family: 'DM Serif Display', serif; font-size: 2rem; line-height: 1.15; margin-bottom: 0.5rem;
+      font-family: 'DM Serif Display', serif; font-size: 2.2rem; line-height: 1.15; margin-bottom: 0.5rem;
     }
     .onboarding-card h1 em { font-style: italic; color: var(--accent2); }
-    .onboarding-desc { color: var(--text-muted); margin-bottom: 1.75rem; font-size: 0.91rem; }
+    .onboarding-desc { color: var(--text-muted); margin-bottom: 1.75rem; font-size: 1rem; }
 
     /* Auth tabs */
     .auth-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; background: var(--surface2); border-radius: 10px; padding: 3px; }
@@ -79,7 +79,7 @@
     .auth-btn {
       width: 100%; background: linear-gradient(135deg, var(--accent), #6c5af5);
       border: none; border-radius: 11px; padding: 0.85rem; color: white;
-      font-family: 'DM Sans', sans-serif; font-size: 0.97rem; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; font-size: 1.05rem; font-weight: 600;
       cursor: pointer; transition: opacity 0.2s, transform 0.1s; margin-top: 0.5rem;
     }
     .auth-btn:hover { opacity: 0.9; transform: translateY(-1px); }
@@ -115,13 +115,13 @@
       width: 34px; height: 34px; background: linear-gradient(135deg, var(--accent), var(--gold));
       border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
     }
-    .header-title { font-family: 'DM Serif Display', serif; font-size: 1rem; }
-    .header-sub { font-size: 0.68rem; color: var(--text-muted); }
+    .header-title { font-family: 'DM Serif Display', serif; font-size: 1.15rem; }
+    .header-sub { font-size: 0.78rem; color: var(--text-muted); }
     .header-right { display: flex; align-items: center; gap: 0.75rem; }
 
     .mode-badge {
-      display: flex; align-items: center; gap: 0.35rem; padding: 0.22rem 0.65rem;
-      border-radius: 100px; font-size: 0.7rem; font-weight: 600; transition: all 0.4s;
+      display: flex; align-items: center; gap: 0.35rem; padding: 0.28rem 0.75rem;
+      border-radius: 100px; font-size: 0.8rem; font-weight: 600; transition: all 0.4s;
     }
     .mode-badge.thinking { background: rgba(124,106,247,0.12); border: 1px solid rgba(124,106,247,0.3); color: var(--accent2); }
     .mode-badge.drafting { background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.3); color: var(--teal); }
@@ -130,7 +130,7 @@
     .mode-badge.drafting .mode-dot { background: var(--teal); }
 
     .bloom-bar { display: flex; align-items: center; gap: 0.4rem; }
-    .bloom-label { font-size: 0.66rem; color: var(--text-muted); }
+    .bloom-label { font-size: 0.76rem; color: var(--text-muted); }
     .bloom-dots { display: flex; gap: 3px; }
     .bloom-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
     .bloom-dot.active { background: var(--accent2); }
@@ -142,7 +142,7 @@
     }
     .pillar-chip {
       flex: 1; background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 7px; padding: 0.3rem 0.4rem; font-size: 0.68rem; text-align: center;
+      border-radius: 7px; padding: 0.35rem 0.5rem; font-size: 0.8rem; text-align: center;
       color: var(--text-muted); transition: all 0.3s;
     }
     .pillar-chip.active { border-color: var(--accent); color: var(--accent2); background: rgba(124,106,247,0.08); }
@@ -161,19 +161,22 @@
     .message.coach { align-self: flex-start; }
     .message.student { align-self: flex-end; }
 
-    .msg-meta { font-size: 0.67rem; color: var(--text-muted); margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+    .msg-meta { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
     .message.student .msg-meta { justify-content: flex-end; }
 
-    .bloom-tag { font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 100px; font-weight: 600; }
+    .bloom-tag { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 100px; font-weight: 600; }
     .bloom-tag.low { background: rgba(251,146,60,0.12); color: #fb923c; }
     .bloom-tag.mid { background: rgba(124,106,247,0.12); color: var(--accent2); }
     .bloom-tag.high { background: rgba(240,192,96,0.12); color: var(--gold); }
-    .pillar-tag { font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 100px; background: rgba(255,255,255,0.04); color: var(--text-muted); }
+    .pillar-tag { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 100px; background: rgba(255,255,255,0.04); color: var(--text-muted); }
+    .grade-tag-high { background: rgba(74,222,128,0.12); color: #4ade80; }
+    .grade-tag-mid { background: rgba(240,192,96,0.12); color: var(--gold); }
+    .grade-tag-low { background: rgba(251,146,60,0.12); color: #fb923c; }
 
     /* Session restore label */
     .restored-label { font-size: 0.65rem; color: var(--teal); font-style: italic; }
 
-    .msg-bubble { padding: 0.8rem 0.95rem; border-radius: 15px; font-size: 0.9rem; line-height: 1.65; }
+    .msg-bubble { padding: 0.9rem 1.05rem; border-radius: 15px; font-size: 1rem; line-height: 1.7; }
     .message.coach .msg-bubble { background: var(--coach-bg); border: 1px solid var(--border); border-top-left-radius: 4px; }
     .message.student .msg-bubble { background: var(--student-bg); border: 1px solid rgba(124,106,247,0.2); border-top-right-radius: 4px; }
     .message.restored .msg-bubble { opacity: 0.75; }
@@ -184,8 +187,8 @@
       border-radius: 11px; padding: 0.875rem 1rem; margin-top: 0.65rem; position: relative;
     }
     .draft-output-label {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
-      color: var(--teal); margin-bottom: 0.45rem; display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;
     }
     .copy-btn {
       background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.25); color: var(--teal);
@@ -194,7 +197,7 @@
     }
     .copy-btn:hover { background: rgba(45,212,191,0.2); }
     .copy-btn.copied { background: rgba(74,222,128,0.15); border-color: rgba(74,222,128,0.3); color: var(--success); }
-    .draft-content { font-size: 0.87rem; line-height: 1.7; color: #c8d8d0; white-space: pre-wrap; }
+    .draft-content { font-size: 0.97rem; line-height: 1.75; color: #c8d8d0; white-space: pre-wrap; }
 
     .mode-switch-msg {
       align-self: center; background: rgba(45,212,191,0.06); border: 1px solid rgba(45,212,191,0.2);
@@ -240,7 +243,7 @@
     .send-btn.d { background: #0d9488; }
     .send-btn:hover { opacity: 0.85; transform: scale(1.05); }
     .send-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
-    .input-hint { font-size: 0.67rem; color: var(--text-muted); text-align: center; margin-top: 0.35rem; }
+    .input-hint { font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 0.35rem; }
 
     @media (max-width: 600px) {
       .message { max-width: 92%; }
@@ -352,6 +355,13 @@
   let currentTab = 'new';
 
   const BLOOM_LABELS = ['','Remember','Understand','Apply','Analyse','Evaluate','Create'];
+
+  const PILLAR_DESCRIPTIONS = {
+    'TOOLS': 'CA1 — Decision-making & project management tools',
+    'RISKS': 'AE1/AE2 — Risks, opportunities & digital',
+    'CONTRIBUTION': 'CA2/CA3 — Individual contribution & business intelligence',
+    'DRAFTING': 'Drafting mode — essay planning'
+  };
 
   // ── AUTH UI ────────────────────────────────────────────────
   function switchTab(tab) {
@@ -512,8 +522,12 @@
     if (bloom && bloom.bloom_rank) {
       const r = bloom.bloom_rank;
       const cls = r <= 2 ? 'low' : r <= 4 ? 'mid' : 'high';
+      const gradeSignal = bloom.sace_grade_signal && bloom.sace_grade_signal !== 'N/A' ? bloom.sace_grade_signal : null;
+      const gradeCls = gradeSignal === 'A' ? 'high' : gradeSignal === 'B' ? 'high' : gradeSignal === 'C' ? 'mid' : gradeSignal ? 'low' : '';
+      const pillarDesc = PILLAR_DESCRIPTIONS[bloom.active_pillar] || bloom.active_pillar || '';
       meta.innerHTML += ` <span class="bloom-tag ${cls}">Bloom ${r} · ${BLOOM_LABELS[r]}</span>`;
-      if (bloom.active_pillar) meta.innerHTML += ` <span class="pillar-tag">${bloom.active_pillar}</span>`;
+      if (gradeSignal) meta.innerHTML += ` <span class="bloom-tag ${gradeCls}" title="Indicative grade for this prompt">Grade ~${gradeSignal}</span>`;
+      if (pillarDesc) meta.innerHTML += ` <span class="pillar-tag">${pillarDesc}</span>`;
       if (!restored) updateBloom(r, bloom.active_pillar);
     }
     if (restored) meta.innerHTML += ` <span class="restored-label">restored</span>`;
@@ -650,7 +664,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-        messages, sessionId, studentId, studentName,
+          messages, sessionId, studentId, studentName,
           exchangeCount, currentMode, sectionActive
         })
       });
