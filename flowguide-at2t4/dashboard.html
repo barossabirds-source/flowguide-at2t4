@@ -29,7 +29,7 @@
     html, body {
       height: 100%; background: var(--bg);
       color: var(--text); font-family: 'Mulish', sans-serif;
-      font-size: 14px; line-height: 1.5;
+      font-size: 16px; line-height: 1.5;
     }
 
     /* ── LAYOUT ── */
@@ -89,7 +89,7 @@
     .nav-item {
       display: flex; align-items: center; gap: 0.65rem;
       padding: 0.55rem 0.75rem; border-radius: 8px;
-      font-size: 0.82rem; font-weight: 500;
+      font-size: 0.9rem; font-weight: 500;
       color: var(--text2); cursor: pointer;
       transition: all 0.15s; border: none;
       background: transparent; width: 100%; text-align: left;
@@ -160,16 +160,16 @@
     }
 
     .stat-label {
-      font-size: 0.68rem; font-weight: 700; color: var(--text3);
+      font-size: 0.78rem; font-weight: 700; color: var(--text3);
       text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem;
     }
 
     .stat-value {
-      font-family: 'Syne', sans-serif; font-size: 1.8rem;
+      font-family: 'Syne', sans-serif; font-size: 2.2rem;
       font-weight: 800; line-height: 1;
     }
 
-    .stat-sub { font-size: 0.7rem; color: var(--text3); margin-top: 0.3rem; }
+    .stat-sub { font-size: 0.8rem; color: var(--text3); margin-top: 0.3rem; }
 
     .stat-card.alert .stat-value { color: var(--red); }
     .stat-card.warn .stat-value { color: var(--orange); }
@@ -187,7 +187,7 @@
     }
 
     .section-title {
-      font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700;
+      font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
       color: var(--text);
     }
 
@@ -207,7 +207,7 @@
       padding: 0.65rem 1.25rem;
       background: var(--surface2);
       border-bottom: 1px solid var(--border);
-      font-size: 0.68rem; font-weight: 700; color: var(--text3);
+      font-size: 0.78rem; font-weight: 700; color: var(--text3);
       text-transform: uppercase; letter-spacing: 0.07em;
       gap: 0.5rem;
     }
@@ -226,7 +226,7 @@
     .table-row.selected { background: rgba(79,127,255,0.06); border-left: 3px solid var(--accent); }
 
     .student-name {
-      font-weight: 600; font-size: 0.85rem;
+      font-weight: 600; font-size: 0.95rem;
       display: flex; align-items: center; gap: 0.5rem;
     }
 
@@ -253,7 +253,7 @@
     .grade-chip {
       display: inline-flex; align-items: center;
       padding: 0.15rem 0.5rem; border-radius: 5px;
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em;
+      font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em;
     }
 
     .grade-A { background: rgba(37,208,171,0.12); color: var(--teal); }
@@ -274,14 +274,14 @@
     .pillar-mini.visited { background: rgba(240,180,41,0.1); border-color: var(--gold); }
 
     .mode-badge-mini {
-      font-size: 0.68rem; font-weight: 600; padding: 0.15rem 0.5rem;
+      font-size: 0.78rem; font-weight: 600; padding: 0.15rem 0.5rem;
       border-radius: 5px; letter-spacing: 0.03em;
     }
     .mode-badge-mini.thinking { background: rgba(79,127,255,0.1); color: var(--accent2); }
     .mode-badge-mini.drafting { background: rgba(37,208,171,0.1); color: var(--teal); }
 
-    .exchanges-count { font-size: 0.82rem; color: var(--text2); }
-    .last-active { font-size: 0.72rem; color: var(--text3); }
+    .exchanges-count { font-size: 0.92rem; color: var(--text2); }
+    .last-active { font-size: 0.82rem; color: var(--text3); }
 
     /* FLAG BADGES in row */
     .flag-badges { display: flex; gap: 3px; }
@@ -309,7 +309,7 @@
     }
 
     .drilldown-name {
-      font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+      font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700;
     }
 
     .drilldown-meta {
@@ -355,14 +355,14 @@
     }
 
     .exchange-student {
-      font-size: 0.8rem; color: var(--text2); line-height: 1.45;
+      font-size: 0.9rem; color: var(--text2); line-height: 1.5;
       background: var(--surface2); border-radius: 6px;
       padding: 0.4rem 0.6rem; margin-bottom: 0.35rem;
       font-style: italic;
     }
 
     .exchange-reasoning {
-      font-size: 0.75rem; color: var(--text3); line-height: 1.4;
+      font-size: 0.85rem; color: var(--text3); line-height: 1.45;
     }
 
     /* LOADING */
@@ -534,6 +534,20 @@
 <script>
   // ── CONFIG ───────────────────────────────────────────────────
   const BLOOM_LABELS = ['','Remember','Understand','Apply','Analyse','Evaluate','Create'];
+
+  const PILLAR_DESCRIPTIONS = {
+    'TOOLS': 'CA1 — Decision-making & project management tools',
+    'RISKS': 'AE1/AE2 — Risks, opportunities & digital',
+    'CONTRIBUTION': 'CA2/CA3 — Individual contribution & business intelligence',
+    'DRAFTING': 'Drafting — essay planning'
+  };
+
+  const PILLAR_DESCRIPTIONS = {
+    'TOOLS': 'CA1 — Decision-making & project management tools',
+    'RISKS': 'AE1/AE2 — Risks, opportunities & digital',
+    'CONTRIBUTION': 'CA2/CA3 — Individual contribution & business intelligence',
+    'DRAFTING': 'Drafting — essay planning'
+  };
 
   let allSessions = [];
   let allExchanges = [];
@@ -735,14 +749,18 @@
       const reasoning = e.reflection?.reasoning || '';
       const mode = e.reflection?.mode || 'thinking';
       const bloomLabel = BLOOM_LABELS[bloom] || '—';
+      const pillarDesc = PILLAR_DESCRIPTIONS[pillar] || pillar;
+      const gradeValid = grade && grade !== 'N/A' && grade !== '—';
+      const gradeCls = gradeValid ? (grade <= 'B' ? 'grade-A' : grade === 'C' ? 'grade-C' : 'grade-D') : 'grade-NA';
+      const bloomCls = bloom <= 2 ? 'grade-D' : bloom <= 4 ? 'grade-C' : 'grade-A';
 
       return `<div class="exchange-item">
         <div class="exchange-num">${e.iteration_number}</div>
         <div class="exchange-body">
           <div class="exchange-tags">
-            <span class="grade-chip grade-${grade === 'N/A' ? 'NA' : grade}">Bloom ${bloom} · ${bloomLabel}</span>
-            <span class="grade-chip grade-${grade === 'N/A' ? 'NA' : grade}">Grade ${grade}</span>
-            <span class="mode-badge-mini ${mode}">${pillar}</span>
+            <span class="grade-chip ${bloomCls}">Bloom ${bloom} · ${bloomLabel}</span>
+            ${gradeValid ? `<span class="grade-chip ${gradeCls}" title="Indicative grade for this prompt">Indicative grade: ~${grade}</span>` : ''}
+            <span class="mode-badge-mini ${mode === 'drafting' ? 'drafting' : 'thinking'}">${pillarDesc}</span>
           </div>
           <div class="exchange-student">"${e.full_prompt || '—'}"</div>
           <div class="exchange-reasoning">${reasoning}</div>
